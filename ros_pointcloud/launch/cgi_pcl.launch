@@ -1,0 +1,6 @@
+<launch>
+    <node name="depth_estimation_node" pkg="ros_pointcloud" type="final.py" output="screen" >
+
+    </node>
+    
+</launch>
