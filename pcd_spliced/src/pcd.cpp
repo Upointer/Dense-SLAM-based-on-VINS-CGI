@@ -40,7 +40,7 @@ public:
     }
 
     void pointcloudCallback(const sensor_msgs::PointCloud2ConstPtr& input_cloud_msg) {
-        std::lock_guard<std::mutex> lock(mutex_); // 线程安全
+        std::lock_guard<std::mutex> lock(mutex_);
         frameid++;
         //if(frameid % 3 !=1){
         //	return;
@@ -61,25 +61,6 @@ public:
         // plus to total cloud
         *total_cloud += *cloud;
         
-        // Create a pass-through filter to keep points within discut meters from frame
-        /*
-        pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_pass(new pcl::PointCloud<pcl::PointXYZ>);
-        pcl::PassThrough<pcl::PointXYZ> pass;
-        pass.setInputCloud(total_cloud);
-        pass.setFilterFieldName("x");
-        pass.setFilterLimits(-DISCUT, DISCUT);
-        pass.filter(*cloud_pass);
-        pass.setInputCloud(cloud_pass);
-        pass.setFilterFieldName("y");
-        pass.setFilterLimits(-DISCUT, DISCUT);
-        pass.filter(*cloud_pass);
-        pass.setInputCloud(cloud_pass);
-        pass.setFilterFieldName("z");
-        pass.setFilterLimits(-DISCUT, DISCUT);
-        pass.filter(*cloud_pass);
-        
-        *total_cloud = *cloud_pass;
-        */
         // del duplicate points
         pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered(new pcl::PointCloud<pcl::PointXYZ>);
         pcl::VoxelGrid<pcl::PointXYZ> vg;
@@ -99,7 +80,7 @@ private:
     ros::Subscriber pointcloud_subscriber;
     ros::Publisher pointcloud_publisher;
     std::shared_ptr<tf::TransformListener> tf_listener;
-    std::mutex mutex_; // 添加互斥锁
+    std::mutex mutex_;
     int frameid;
 };
 
