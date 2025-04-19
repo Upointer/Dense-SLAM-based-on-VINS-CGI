@@ -1,0 +1,14 @@
+<launch>
+  <!-- 深度估计节点 -->
+  <node pkg="cgi_pcl" 
+        type="depth_estimator" 
+        name="depth_estimator" 
+        output="screen">
+  </node>
+
+  <!-- 点云生成节点 -->
+  <node pkg="cgi_pcl" 
+        type="depth_to_pointcloud" 
+        name="depth_to_pointcloud" 
+        output="screen"/>
+</launch>

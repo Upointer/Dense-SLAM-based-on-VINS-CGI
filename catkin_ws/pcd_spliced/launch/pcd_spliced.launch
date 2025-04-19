@@ -1,0 +1,10 @@
+<launch>
+    <node name="pcd_spliced" pkg="pcd_spliced" type="pcd" output="screen" >
+    <!-- 设置参数 -->
+    <param name="~disk_radius" value="3.0" />
+    <param name="~disk_height" value="-1.0" />
+    <param name="~disk_resolution" value="0.03" />
+ 
+    </node>
+    
+</launch>
