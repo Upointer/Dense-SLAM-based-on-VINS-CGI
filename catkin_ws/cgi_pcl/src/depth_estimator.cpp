@@ -12,18 +12,18 @@
 class DepthEstimator {
 public:
     DepthEstimator() : nh_("~"), env_(ORT_LOGGING_LEVEL_WARNING) {
-        // 参数初始化
-        std::string model_path = "/home/xjtu/catkin_ws/src/cgi_pcl/models/cgi_stereo_sceneflow_480x640.onnx";
+        // params init
+        std::string model_path = "models/cgi_stereo_sceneflow_480x640.onnx";
         std::string left_topic_ = "/1/pylon_camera_node/image_raw";
         std::string right_topic_ = "/3/pylon_camera_node/image_raw";
         std::string depth_topic_ = "/cgi/depth";
         queue_size_ = 5;
 
-        // 从XML加载相机参数
+        // load params from XML
         std::string xml_path = ros::package::getPath("cgi_pcl") + "/config/camera_params.xml";
         loadCameraParamsFromXML(xml_path);
 
-        // 初始化ONNX模型
+        // init ONNX model
         Ort::SessionOptions session_options;
         session_options.SetIntraOpNumThreads(1);
         session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
@@ -38,7 +38,7 @@ public:
             
         session_ = Ort::Session(env_, model_path.c_str(), session_options);
 
-        // 初始化发布订阅
+        // init pub & sub
         depth_pub_ = nh_.advertise<sensor_msgs::Image>(depth_topic_, queue_size_);
         left_sub_ = nh_.subscribe(left_topic_, queue_size_, &DepthEstimator::leftImageCallback, this);
         right_sub_ = nh_.subscribe(right_topic_, queue_size_, &DepthEstimator::rightImageCallback, this);
@@ -52,26 +52,26 @@ private:
             return;
         }
 
-        // 解析XML结构
+        // read XML
         auto root = doc.FirstChildElement("opencv_storage");
         if (!root) {
             ROS_ERROR("Invalid XML structure: missing opencv_storage");
             return;
         }
 
-        // 读取左相机内参
+        // left camera params
         parseMatrix(root->FirstChildElement("left_cameraMatrix"), left_camera_matrix_);
         parseMatrix(root->FirstChildElement("left_distCoeffs"), left_dist_coeffs_);
         
-        // 读取右相机内参
+        // right camera params
         parseMatrix(root->FirstChildElement("right_cameraMatrix"), right_camera_matrix_);
         parseMatrix(root->FirstChildElement("right_distCoeffs"), right_dist_coeffs_);
 
-        // 读取旋转和平移矩阵
+        // rotation and translation
         parseMatrix(root->FirstChildElement("rotation_matrix"), R_);
         parseMatrix(root->FirstChildElement("translation_vector"), T_);
 
-        // 转换平移向量单位（XML中单位为米，转换为毫米）
+        // trans m to mm
         T_ *= 1000.0;
     }
 
@@ -81,12 +81,12 @@ private:
             return;
         }
 
-        // 解析矩阵维度
+        // matrix dimension
         int rows = elem->FirstChildElement("rows")->IntText();
         int cols = elem->FirstChildElement("cols")->IntText();
         std::string data_str = elem->FirstChildElement("data")->GetText();
 
-        // 转换数据到OpenCV矩阵
+        // trans data to cv::Mat
         std::stringstream ss(data_str);
         output = cv::Mat(rows, cols, CV_64F);
         for (int i = 0; i < rows; ++i) {
@@ -137,11 +137,11 @@ private:
     void processStereoPair(const sensor_msgs::ImageConstPtr& left_msg,
                           const sensor_msgs::ImageConstPtr& right_msg) {
         try {
-            // 转换为OpenCV图像
+            // trans msg to cv::Mat
             cv::Mat left_img = cv_bridge::toCvShare(left_msg, "bgr8")->image;
             cv::Mat right_img = cv_bridge::toCvShare(right_msg, "bgr8")->image;
 
-            // 立体校正
+            // stereo rectification
             cv::Mat rect_left, rect_right;
             double baseline;
             stereoRectification(left_img, right_img,
@@ -151,15 +151,15 @@ private:
                               rect_left, rect_right, baseline);
 
 
-            // 图像预处理
+            // resize and crop
             auto res_left = resizeCrop(rect_left, left_camera_matrix_, 640, 480, 0.2625);
             auto res_right = resizeCrop(rect_right, right_camera_matrix_, 640, 480, 0.2625);        
 
-            // 准备输入张量
+            // prepare tensor
             std::vector<float> left_tensor = prepareInput(res_left.outimg);
             std::vector<float> right_tensor = prepareInput(res_right.outimg);
 
-            // 运行推理
+            // reasoning
             Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(
                 OrtAllocatorType::OrtArenaAllocator, OrtMemType::OrtMemTypeDefault);
             
@@ -173,17 +173,17 @@ private:
                                       input_names_.data(), input_tensors.data(), 2,
                                       output_names_.data(), 1);
 
-            // 处理输出
+            // process output
             float* disp_data = outputs[0].GetTensorMutableData<float>();
             cv::Mat disp_map(480, 640, CV_32FC1, disp_data);
 
-            // 计算深度图
+            // compute depth
             //const double focal = (res_left.focal_len + res_right.focal_len) / 2.0;
             //cv::Mat depth_map = (baseline * focal) / (disp_map + 1e-9);
             const double focal_ratio = res_left.focal_len / res_right.focal_len;
             cv::Mat depth_map = (baseline * res_left.focal_len) / (disp_map * focal_ratio + 1e-9);
             
-            // 发布深度图
+            // pub depth
             publishDepth(depth_map, left_msg->header);
         }
         catch (const cv_bridge::Exception& e) {
@@ -198,7 +198,7 @@ private:
         std::vector<float> input_tensor;
         input_tensor.reserve(3 * 480 * 640);
         
-        // 通道分离与归一化
+        // channel separation & normlization
         std::vector<cv::Mat> channels(3);
         cv::split(float_img, channels);
         for (const auto& channel : channels) {
@@ -210,7 +210,7 @@ private:
 
     void publishDepth(const cv::Mat& depth, const std_msgs::Header& header) {
         cv::Mat valid_depth = depth.clone();
-        valid_depth.setTo(0, depth < 0);  // 过滤负深度值
+        valid_depth.setTo(0, depth < 0);  // filter negative depth
 
         sensor_msgs::ImagePtr msg = cv_bridge::CvImage(header, "32FC1", valid_depth).toImageMsg();
         depth_pub_.publish(msg);
@@ -218,7 +218,7 @@ private:
     }
 
 
-    // 相机参数（现从XML加载）
+    // camera params
     cv::Mat left_camera_matrix_;
     cv::Mat left_dist_coeffs_;
     cv::Mat right_camera_matrix_;
@@ -226,7 +226,7 @@ private:
     cv::Mat R_;
     cv::Mat T_;
 
-    // ROS组件
+    // ROS utils
     ros::NodeHandle nh_;
     ros::Subscriber left_sub_, right_sub_;
     ros::Publisher depth_pub_;
@@ -239,7 +239,8 @@ private:
     std::vector<const char*> input_names_ = {"left", "right"};
     std::vector<const char*> output_names_ = {"output"};
     std::vector<int64_t> input_shape_ = {1, 3, 480, 640};
-    
+
+    // queue size
     int queue_size_;
 
 };
