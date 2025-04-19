@@ -29,7 +29,6 @@ def resize_crop(input_image, cameraMatrix, width, height, ratio):
    
     # resize after stereo rectification
     resized_image = cv2.resize(input_image, (0,0), fx=ratio, fy=ratio)
-    #cv2.imwrite(f"re.png", resized_image)
     print(fx,fy,cx,cy)
     fx, fy, cx, cy = fx*ratio, fy*ratio, cx*ratio, cy*ratio
     focal_len = (fx+fy)/2
@@ -38,18 +37,13 @@ def resize_crop(input_image, cameraMatrix, width, height, ratio):
     start_y = int(max(cy - height/2 , 0))
     end_x = start_x + width
     end_y = start_y + height
-    #print(start_x," ",start_y," ",end_x," ",end_y)
     # crop
     cropped_image = resized_image[start_y:end_y, start_x:end_x]
-    #cv2.imwrite(f"1.png", cropped_image)
     cx, cy = cx - start_x, cy - start_y
     outimg = cv2.cvtColor(cropped_image, cv2.COLOR_BGR2RGB).astype(np.float32) / 255.0
     print(outimg.shape[1],outimg.shape[0],fx,fy,cx,cy)
     
     return outimg, focal_len
-     
-    #640 480 313.87120030912257 313.662948235278 316.3974559393791 240.84612786990442
-    #640 480 314.60986853958866 314.37382705148036 312.2086880316901 240.92746927225664
 
     
     
