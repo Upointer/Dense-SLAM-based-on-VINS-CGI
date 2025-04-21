@@ -36,7 +36,7 @@ R = np.array([[0.9996741857473295, -0.0009672658622501354, -0.025506602030780055
 T = np.array([-876.7712875596468, -2.0200417425657504, -6.922912031092199])
 
 #Global Value
-model_path="/home/xjtu/catkin_ws/src/ros_pointcloud/scripts/cgi_stereo_sceneflow_480x640.onnx" #/path/to/your/model
+model_path="models/cgi_stereo_sceneflow_480x640.onnx" #/path/to/your/model
 left_image_queue = queue.Queue()
 right_image_queue = queue.Queue()
 MAX_QUEUE_LENGTH = 10
@@ -182,7 +182,7 @@ def process_images(left_image, right_image, sess):
 
 
 def publish_pointcloud(points, colored_depth):
-    pub = rospy.Publisher('/cgi_pcl', PointCloud2, queue_size=10)
+    pub = rospy.Publisher('/cgi/pointcloud', PointCloud2, queue_size=10)
     
     # TF listener
     tf_listener = tf.TransformListener()
