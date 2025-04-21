@@ -45,5 +45,16 @@ Download [Our demo ROS bag](https://pan.baidu.com/s/11w9-92u1pqxjAzpFOfljbA?pwd=
    cd ~/YOUR_ROSBAG_FOLDER/demo_rosbag
    cp -r demo_car/ ~/catkin_ws/src/VINS-Fusion/config
    cp -r models/ ~/catkin_ws/src/cgi_pcl
+   cp -r models/ ~/catkin_ws/src/ros_pointcloud
 ```
 ### 4.1. Run Demo
+We provide **cgi_pcl** ros package based on C++ and **ros_pointcloud** ros package based on python3.10, We will show our demo on **cgi_pcl**. 
+Open five terminals, run vins odometry, point cloud and point merge, rviz and play the bag file.
+```
+    roslaunch vins vins_rviz.launch
+    rosrun vins vins_node ~/catkin_ws/src/VINS-Fusion/config/demo_car/demo_car.yaml 
+    roslaunch cgi_pcl cgi_pcl.launch
+    roslaunch pcd_spliced pcd_spliced.launch
+    rosbag play YOUR_DATASET_FOLDER/demo_car.bag
+    
+```
