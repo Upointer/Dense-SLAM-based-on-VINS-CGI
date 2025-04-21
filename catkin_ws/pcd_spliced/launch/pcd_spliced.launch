@@ -1,6 +1,0 @@
-<launch>
-    <node name="pcd_spliced" pkg="pcd_spliced" type="pcd" output="screen" >
-
-    </node>
-
-</launch>
