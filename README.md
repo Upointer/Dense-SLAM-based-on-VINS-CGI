@@ -1,5 +1,5 @@
 # Dense-SLAM based on VINS & CGI
-A Dense-SLAM Project for getting Real-time dense 3D map.<br>
+A Dense-SLAM Project for building Real-time dense 3D map.<br>
 ## 1. Method
 <img src="support_file/Method.png" width = 65% height = 65% div align=center />
 <br>
@@ -36,10 +36,11 @@ Clone the repository and catkin_make:
 ```
 (It's recommended to put VINS-Fusion under the same workspace.)
 ### 3.2. Get **ONNX** inference for **CGI_Stereo**
-<br>
-
+We provide two ways for you to onnx inference models.
+* You can follow [this repository](https://github.com/fateshelled/cgistereo_demo) or find **358_CGI-Stereo** in [PINTO_model_zoo](https://github.com/PINTO0309/PINTO_model_zoo) to trans into ONNX framework.
+* Our demo will provide you a readymade model to run our demo rosbag.
 ## 4. Demo Example
-Download [Our demo ROS bag]() to YOUR_ROSBAG_FOLDER and copy the config file to config folder of VINS-Fusion.
+Download [Our demo ROS bag](https://pan.baidu.com/s/11w9-92u1pqxjAzpFOfljbA?pwd=ts6h) to YOUR_ROSBAG_FOLDER and copy the config file to config folder of VINS-Fusion.
 ```
    cd ~/YOUR_ROSBAG_FOLDER/demo_rosbag
    cp -r demo_car/ ~/catkin_ws/src/VINS-Fusion/config  
