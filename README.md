@@ -40,7 +40,7 @@ We provide two ways for you to onnx inference models.
 * You can follow [this repository](https://github.com/fateshelled/cgistereo_demo) or find **358_CGI-Stereo** in [PINTO_model_zoo](https://github.com/PINTO0309/PINTO_model_zoo) to trans into ONNX framework.
 * Our demo will provide you a readymade model to run our demo rosbag.
 ## 4. Demo Example
-Download [Our demo ROS bag](https://pan.baidu.com/s/11w9-92u1pqxjAzpFOfljbA?pwd=ts6h) to YOUR_ROSBAG_FOLDER then copy the config file to config folder of VINS-Fusion and copy the models directory to **cgi_pcl**.
+Download [Our demo ROS bag](https://pan.baidu.com/s/11w9-92u1pqxjAzpFOfljbA?pwd=ts6h) to YOUR_ROSBAG_FOLDER then copy the config file to config folder of VINS-Fusion and copy the models directory to **cgi_pcl** or **ros_pointcloud**.
 ```
    cd ~/YOUR_ROSBAG_FOLDER/demo_rosbag
    cp -r demo_car/ ~/catkin_ws/src/VINS-Fusion/config
