@@ -1,0 +1,14 @@
+<launch>
+  <!-- depth estimator node -->
+  <node pkg="cgi_pcl" 
+        type="depth_estimator" 
+        name="depth_estimator" 
+        output="screen">
+  </node>
+
+  <!-- pointcloud node -->
+  <node pkg="cgi_pcl" 
+        type="depth_to_pointcloud" 
+        name="depth_to_pointcloud" 
+        output="screen"/>
+</launch>
