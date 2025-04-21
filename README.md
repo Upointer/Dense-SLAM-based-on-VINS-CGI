@@ -4,7 +4,10 @@ A Dense-SLAM Project for building Real-time dense 3D map.<br>
 <img src="support_file/Method.png" width = 65% height = 65% div align=center />
 <br>
 Our approach involves converting the disparity map obtained through stereo matching via CGI-Stereo which is subsequently transformed into a point cloud. Utilizing the localization data derived from stereo images and IMU within the VINS-Fusion framework, we performe positional transformation on the point cloud and then integrate them through a straightforward summation process.<br>
-
+### 1.1. Depth Image & Point Cloud
+In package **ros_pointcloud** we fused this tow parts together, while in package **cgi_pcl** we use two nodes: **depth_estimator** and **depth_to_point** to generate depth image and point cloud separately.
+### 1.2. Point Cloud Merge
+This package subscribe tf tree produced by VINS-Fusion and point cloud topic, add them together after processed by voxel filter, distance filter and time filter.
 ## 2. To Start With
 First, you should konw how to deploy a VSLAM project (such as ORB-SLAM3 or VINS-Fusion) on your robot.<br>
 Our project is based on [VINS-Fusion](https://github.com/HKUST-Aerial-Robotics/VINS-Fusion) and [CGI-Stereo](https://github.com/gangweiX/CGI-Stereo).<br>
@@ -49,12 +52,16 @@ Download [Our demo ROS bag](https://pan.baidu.com/s/11w9-92u1pqxjAzpFOfljbA?pwd=
 ```
 ### 4.1. Run Demo
 We provide **cgi_pcl** ros package based on C++ and **ros_pointcloud** ros package based on python3.10, We will show our demo on **cgi_pcl**. 
-Open five terminals, run vins odometry, point cloud and point merge, rviz and play the bag file.
+Open five terminals, run vins odometry, point cloud and point cloud merge, rviz and play the bag file.
 ```
     roslaunch vins vins_rviz.launch
     rosrun vins vins_node ~/catkin_ws/src/VINS-Fusion/config/demo_car/demo_car.yaml 
     roslaunch cgi_pcl cgi_pcl.launch
     roslaunch pcd_spliced pcd_spliced.launch
     rosbag play YOUR_DATASET_FOLDER/demo_car.bag
-    
 ```
+### 4.2. Run your own project
+If you want to run this repository on your own robot, thera are two things you should care about.
+* **Camera Params** Calibrate your stereo camera, and write your camera params to **cammera_params.xml** in config.
+* **Resolution and Crop Ratio** As the input size of inference models is fixed, for different resolution, you should choose a certain ratio to resize your raw images and crop as less as possible.
+
