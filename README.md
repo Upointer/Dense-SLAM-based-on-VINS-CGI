@@ -4,10 +4,13 @@ A Dense-SLAM Project for building Real-time dense 3D map.<br>
 <img src="support_file/Method.png" width = 65% height = 65% div align=center />
 <br>
 Our approach involves converting the disparity map obtained through stereo matching via CGI-Stereo which is subsequently transformed into a point cloud. Utilizing the localization data derived from stereo images and IMU within the VINS-Fusion framework, we performe positional transformation on the point cloud and then integrate them through a straightforward summation process.<br>
+
 ### 1.1. Depth Image & Point Cloud
 In package **ros_pointcloud** we fused this tow parts together, while in package **cgi_pcl** we use two nodes: **depth_estimator** and **depth_to_point** to generate depth image and point cloud separately.
+
 ### 1.2. Point Cloud Merge
 This package subscribe tf tree produced by VINS-Fusion and point cloud topic, add them together after processed by voxel filter, distance filter and time filter.
+
 ## 2. To Start With
 First, you should konw how to deploy a VSLAM project (such as ORB-SLAM3 or VINS-Fusion) on your robot.<br>
 Our project is based on [VINS-Fusion](https://github.com/HKUST-Aerial-Robotics/VINS-Fusion) and [CGI-Stereo](https://github.com/gangweiX/CGI-Stereo).<br>
