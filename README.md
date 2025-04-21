@@ -27,22 +27,22 @@ Follow [Ceres Installation](http://ceres-solver.org/installation.html).
 ## 3. Build DSVC
 ### 3.1. Clone and Make
 Clone the repository and catkin_make:
-'''
+```
     cd ~/catkin_ws/src
     git clone https://github.com/Upointer/Dense-SLAM-based-on-VINS-CGI.git
     cd ../
     catkin_make
     source ~/catkin_ws/devel/setup.bash
-'''
+```
 (It's recommended to put VINS-Fusion under the same workspace.)
 ### 3.2. Get **ONNX** inference for **CGI_Stereo**
 <br>
 
 ## 4. Demo Example
 Download [Our demo ROS bag]() to YOUR_ROSBAG_FOLDER and copy the config file to config folder of VINS-Fusion.
-'''
+```
    cd ~/YOUR_ROSBAG_FOLDER/demo_rosbag
    cp -r demo_car/ ~/catkin_ws/src/VINS-Fusion/config  
-'''
+```
 
 ### 4.1. Run Demo
