@@ -19,7 +19,7 @@
 
 #define WORLDFRAME "world"
 #define BODYFRAME "body"
-#define MAX_QUEUE_SIZE 80
+#define MAX_QUEUE_SIZE 5
 #define XYDISCUT 30.0
 #define ZDISCUT 5.0
 
